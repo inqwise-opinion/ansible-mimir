@@ -1,0 +1,99 @@
+---
+# This file should contain Mimir's configuration.
+# https://grafana.com/docs/mimir/latest/references/configuration-parameters/
+
+target: all,alertmanager,overrides-exporter
+
+store_gateway:
+  sharding_ring:
+    instance_interface_names:
+    - ens5
+frontend:
+  instance_interface_names: ["ens5"]
+ruler:
+  ring:
+    instance_interface_names: ["ens5"]
+    # Quickly detect unhealthy rulers to speed up the tutorial.
+    heartbeat_period: 2s
+    heartbeat_timeout: 10s
+  rule_path: {{ mimir_block_storage_base_path }}/{{ mimir_ruler_folder }}
+  alertmanager_url: http://127.0.0.1:8080/alertmanager
+  
+alertmanager:
+  sharding_ring:
+    instance_interface_names: ["ens5"]
+  data_dir: {{ mimir_block_storage_base_path }}/{{ mimir_alertmanager_folder }}
+  fallback_config_file: {{ mimir_alertmanager_config_path }}
+  external_url: http://localhost:9009/alertmanager
+query_scheduler:
+  ring:
+    instance_interface_names: ["ens5"]
+
+
+# Use memberlist, a gossip-based protocol, to enable the 3 Mimir replicas to communicate
+{% if mimir_memberlist is defined %}
+memberlist:
+  {{ mimir_memberlist | to_nice_yaml(indent=2, sort_keys=False) | indent(2, False)}}
+{% endif %}
+
+#memberlist:
+#  join_members: [ "dnssrv+mimir-cluster.opinion-stg.local" ]
+#  advertise_addr: {{ private_ip }}
+#  abort_if_cluster_join_fails: false
+
+# Disable the requirement that every request to Mimir has a
+# X-Scope-OrgID header. `anonymous` will be substituted in instead.
+multitenancy_enabled: false
+
+server:
+  log_format: logfmt
+  log_level: warn
+
+distributor:
+  ring:
+    kvstore:
+      store: memberlist
+    instance_interface_names: ["ens5"]
+  pool:
+    health_check_ingesters: true
+
+
+ingester:
+  ring:
+    # The address to advertise for this ingester.  Will be autodiscovered by
+    # looking up address on eth0 or en0; can be specified if this fails.
+    # address: 127.0.0.1
+
+    # We want to start immediately and flush on shutdown.
+    min_ready_duration: 0s
+    final_sleep: 0s
+    num_tokens: 512
+
+    # Use an in memory ring store, so we don't need to launch a Consul.
+    kvstore:
+      store: inmemory
+    replication_factor: 1
+    instance_interface_names: ["ens5"]
+
+
+# Configure Mimir to use Minio as object storage backend.
+common:
+  storage:
+    backend: s3
+    s3:
+      endpoint: s3.il-central-1.amazonaws.com
+      insecure: false
+      bucket_name: mimir-opinion-stg
+      
+
+blocks_storage:
+  storage_prefix: blocks
+  tsdb:
+    dir: {{ mimir_block_storage_base_path }}/{{ mimir_tsdb_folder }}
+
+compactor:
+  sharding_ring:
+    instance_interface_names: ["ens5"]
+
+usage_stats:
+  enabled: false

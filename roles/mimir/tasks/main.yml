@@ -1,0 +1,107 @@
+---
+
+- name: Import grafana GPG public key
+  rpm_key:
+    key: "{{ grafana_gpg_key_url }}"
+    state: present
+  tags: installation
+
+- name: copy grafana.repo
+  ansible.builtin.copy:
+    src: grafana.repo
+    dest: /etc/yum.repos.d/grafana.repo
+    owner: bin
+    group: wheel
+    mode: '0644'
+  tags: installation
+  
+- name: ensure service folder exists
+  ansible.builtin.file:
+    path: "{{ mimir_service_override_path | dirname }}"
+    state: directory
+    mode: 0755
+  tags: installation
+
+- name: copy mimir service
+  template:
+    src: mimir-service-override.conf.j2
+    dest: "{{ mimir_service_override_path }}"
+    mode: 0644
+  tags: installation
+
+- name: install mimir
+  ansible.builtin.package:
+    name: mimir
+    state: present
+  tags: installation
+
+- name: stop mimir service
+  systemd:
+    name: mimir
+    state: stopped
+    daemon_reload: true
+  tags: installation
+  
+- name: ensure block storage base folder exists
+  ansible.builtin.file:
+    path: "{{ mimir_block_storage_base_path }}"
+    state: directory
+    owner: "{{ mimir_user }}"
+    group: "{{ mimir_group }}"
+    mode: 0755
+  tags: installation
+    
+- name: ensure tsdb folder exists
+  ansible.builtin.file:
+    path: "{{ mimir_block_storage_base_path }}/{{ mimir_tsdb_folder }}"
+    state: directory
+    owner: "{{ mimir_user }}"
+    group: "{{ mimir_group }}"
+    mode: 0755
+  tags: installation
+
+- name: ensure alertmanager folder exists
+  ansible.builtin.file:
+    path: "{{ mimir_block_storage_base_path }}/{{ mimir_alertmanager_folder }}"
+    state: directory
+    owner: "{{ mimir_user }}"
+    group: "{{ mimir_group }}"
+    mode: 0755
+  tags: installation
+    
+- name: ensure compactor folder exists
+  ansible.builtin.file:
+    path: "{{ mimir_block_storage_base_path }}/{{ mimir_compactor_folder }}"
+    state: directory
+    owner: "{{ mimir_user }}"
+    group: "{{ mimir_group }}"
+    mode: 0755
+  tags: installation
+    
+- name: ensure ruler folder exists
+  ansible.builtin.file:
+    path: "{{ mimir_block_storage_base_path }}/{{ mimir_ruler_folder }}"
+    state: directory
+    owner: "{{ mimir_user }}"
+    group: "{{ mimir_group }}"
+    mode: 0755
+  tags: installation
+
+- name: copy mimir config
+  template:
+    src: mimir-config.yml.j2
+    dest: "{{ mimir_config_path }}"
+  tags: installation
+  
+- name: copy alertmanager config
+  template:
+    src: alertmanager-fallback-config.yaml.j2
+    dest: "{{ mimir_alertmanager_config_path }}"
+  tags: installation
+  
+- name: start mimir service
+  systemd:
+    name: mimir
+    state: started
+    enabled: yes
+  tags: configuration

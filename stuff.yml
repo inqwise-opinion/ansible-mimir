@@ -1,0 +1,66 @@
+---
+- import_role:
+    name: aws
+  vars:
+    dns_record_list:
+    - name: "{{ private_dns }}.{{ private_domain }}"
+      zone: "{{ private_domain }}"
+      type: A
+      value: "{{ private_ip }}"
+      private: true
+      ttl: 120
+  tags: configuration
+
+- include_role:
+    name: mimir
+  tags: mimir
+  vars:
+    mimir_memberlist:
+      join_members: "{{ mimir_memberlist_join_members }}"
+      advertise_addr: "{{ private_ip }}"
+      abort_if_cluster_join_fails: false
+
+- name: Install Alloy
+  include_role:
+    name: alloy
+  tags: alloy
+  vars:
+    alloy_user_groups:
+      - systemd-journal
+    env_file_vars:
+      CUSTOM_ARGS: "--server.http.listen-addr=0.0.0.0:12345 --disable-reporting=true --stability.level=public-preview"
+    config: |
+      loki.write "local" {
+        endpoint {
+          url = "{{ loki_base_url }}/loki/api/v1/push"
+        }
+      }
+
+      loki.relabel "journal" {
+        forward_to = []
+
+        rule {
+          source_labels = ["__journal__systemd_unit"]
+          regex         = "(mimir.service|telegraf.service)"
+          action        = "keep"
+        }
+        rule {
+          source_labels = ["__journal__systemd_unit"]
+          target_label  = "unit"
+        }
+        rule {
+          source_labels = ["__journal__hostname"]
+          target_label  = "instance"
+        }
+      }
+
+      loki.source.journal "read" {
+        forward_to = [
+          loki.write.local.receiver,
+        ]
+        relabel_rules = loki.relabel.journal.rules
+        labels = {
+          "job" = "integrations/node_exporter",
+          "app" = "mimir",
+        }
+      }

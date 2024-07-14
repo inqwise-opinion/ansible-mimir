@@ -1,0 +1,4 @@
+environment_name: opinion-stg
+telegraf_config_uri: https://internal-opinion-stg.s3.il-central-1.amazonaws.com/telegraf/grafana-telegraf.config
+mimir_memberlist_join_member: dnssrv+mimir-cluster.opinion-stg.local
+loki_base_url: http://loki.opinion-stg.local:3100

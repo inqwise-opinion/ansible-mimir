@@ -1,0 +1,19 @@
+[Unit]
+Description=Horizontally scalable, highly available, multi-tenant, long term Prometheus.
+Documentation=https://grafana.com/oss/mimir/
+Wants=network-online.target
+After=network-online.target
+
+StartLimitIntervalSec=500
+StartLimitBurst=5
+
+[Service]
+Restart=always
+User=mimir
+EnvironmentFile=/etc/sysconfig/mimir
+TimeoutStopSec=20s
+SendSIGKILL=no
+WorkingDirectory=/var/lib/mimir
+
+[Install]
+WantedBy=multi-user.target

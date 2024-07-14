@@ -1,0 +1,12 @@
+grafana_gpg_key_url: https://rpm.grafana.com/gpg.key
+mimir_config_path: /etc/mimir/config.yml
+mimir_alertmanager_config_path: /etc/mimir/alertmanager-fallback-config.yaml
+mimir_block_storage_base_path: /tmp/mimir
+mimir_user: mimir
+mimir_group: "{{ mimir_user }}"
+mimir_tsdb_folder: ingester
+mimir_bucket_store_sync_folder: tsdb-sync
+mimir_compactor_folder: compactor
+mimir_ruler_folder: rules
+mimir_alertmanager_folder: alertmanager
+mimir_service_override_path: /etc/systemd/system/mimir.service.d/override.conf
