@@ -1,6 +1,4 @@
 ---
-discord_webhook: https://discord.com/api/webhooks/{{ discord_message_webhook_id }}/{{ discord_message_webhook_token }}
-discord_channel: "#notifications"
 private_dns: mimir
 private_domain: opinion-stg.local
 app_user: "mimir"

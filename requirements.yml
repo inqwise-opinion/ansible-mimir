@@ -1,4 +1,0 @@
----
-roles:
-  - name: users
-    src: robertdebock.users
