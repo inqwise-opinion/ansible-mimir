@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   goldenimage:
-    uses: inqwise/ansible-automation-toolkit/.github/workflows/goldenimage-workflow.yml@default
+    uses: inqwise/ansible-automation-toolkit/.github/workflows/goldenimage-workflow.yml@ubuntu-24
     with:
       S3_BASE_PATH: "s3://bootstrap-opinion-stg/playbooks"
       ROLE: "arn:aws:iam::992382682634:role/ansible-playbook-workflow-role"
