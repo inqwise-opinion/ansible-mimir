@@ -91,17 +91,11 @@
   template:
     src: mimir-config.yml.j2
     dest: "{{ mimir_config_path }}"
-  tags: installation
+  tags: configuration
   
 - name: copy alertmanager config
   template:
     src: alertmanager-fallback-config.yaml.j2
     dest: "{{ mimir_alertmanager_config_path }}"
-  tags: installation
-  
-- name: start mimir service
-  systemd:
-    name: mimir
-    state: started
-    enabled: yes
   tags: configuration
+  notify: start mimir

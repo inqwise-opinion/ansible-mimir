@@ -1,0 +1,9 @@
+---
+- name: start mimir
+  listen: "start mimir"
+  ansible.builtin.systemd:
+    name: mimir
+    state: started
+    enabled: true
+  when: mimir_service_start_and_enable
+  ignore_errors: true

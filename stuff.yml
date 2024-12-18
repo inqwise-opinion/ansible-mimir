@@ -13,7 +13,7 @@
 
 - include_role:
     name: mimir
-  tags: mimir
+  tags: always
   vars:
     mimir_memberlist:
       join_members: "{{ mimir_memberlist_join_members }}"
@@ -23,7 +23,6 @@
 - name: Install Alloy
   include_role:
     name: alloy
-  tags: alloy
   vars:
     alloy_user_groups:
       - systemd-journal
@@ -64,3 +63,4 @@
           "app" = "mimir",
         }
       }
+  tags: always

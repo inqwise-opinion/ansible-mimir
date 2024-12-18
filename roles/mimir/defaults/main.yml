@@ -10,3 +10,5 @@ mimir_compactor_folder: compactor
 mimir_ruler_folder: rules
 mimir_alertmanager_folder: alertmanager
 mimir_service_override_path: /etc/systemd/system/mimir.service.d/override.conf
+
+mimir_service_start_and_enable: "{{ 'all' in ansible_run_tags or 'configuration' in ansible_run_tags }}"

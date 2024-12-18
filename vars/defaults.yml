@@ -6,3 +6,4 @@ app_group: "{{ app_user }}"
 private_ip: "{{ ansible_default_ipv4['address'] }}"
 mimir_memberlist_join_members:
   - "{{ mimir_memberlist_join_member }}"
+aws_iam_role: "mimir-role"

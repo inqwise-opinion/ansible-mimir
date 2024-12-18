@@ -2,3 +2,4 @@ environment_name: opinion-prod
 telegraf_config_uri: https://internal-opinion.s3.il-central-1.amazonaws.com/telegraf/mimir-telegraf.config
 mimir_memberlist_join_member: dnssrv+mimir-cluster.opinion.local
 loki_base_url: http://loki.opinion-stg.local:3100
+internal_base_url: https://internal-opinion-stg.s3.il-central-1.amazonaws.com
