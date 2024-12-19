@@ -1,6 +1,5 @@
 ---
 private_dns: mimir
-private_domain: opinion-stg.local
 app_user: "mimir"
 app_group: "{{ app_user }}"
 private_ip: "{{ ansible_default_ipv4['address'] }}"

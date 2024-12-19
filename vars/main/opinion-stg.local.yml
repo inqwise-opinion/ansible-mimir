@@ -3,3 +3,4 @@ telegraf_config_uri: https://internal-opinion-stg.s3.il-central-1.amazonaws.com/
 mimir_memberlist_join_member: dnssrv+mimir-cluster.opinion-stg.local
 loki_base_url: http://loki.opinion-stg.local:3100
 internal_base_url: https://internal-opinion-stg.s3.il-central-1.amazonaws.com
+private_domain: opinion-stg.local
