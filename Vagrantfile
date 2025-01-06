@@ -9,7 +9,7 @@ ACCOUNT_ID = "992382682634"
 AWS_REGION = "il-central-1"
 NODE_COUNT = 1
 MAIN_SH_ARGS = <<MARKER
--e "playbook_name=ansible-mimir discord_message_owner_name=#{Etc.getpwuid(Process.uid).name} environment_id=opinion-stg.local" --tags "installation,configuration"
+-e "playbook_name=ansible-mimir discord_message_owner_name=#{Etc.getpwuid(Process.uid).name} environment_id=opinion-stg.local" --tags "installation,configuration,debug"
 MARKER
 Vagrant.configure("2") do |config|
   (1..NODE_COUNT).each do |i|
@@ -51,7 +51,7 @@ Vagrant.configure("2") do |config|
         aws.ami = "ami-00497dc7671d50463"
         aws.instance_type = "t4g.medium"
         aws.subnet_id = "subnet-0e6d52693f72347e4"
-        #aws.associate_public_ip = true
+        aws.associate_public_ip = true
         aws.iam_instance_profile_name = "bootstrap-role"
         aws.tags = {
           Name: "mimir-test#{i}-#{Etc.getpwuid(Process.uid).name}"

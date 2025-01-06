@@ -8,7 +8,7 @@
       type: A
       value: "{{ private_ip }}"
       private: true
-      ttl: 120
+      ttl: 60
   tags: configuration
 
 - include_role:
@@ -26,8 +26,6 @@
   vars:
     alloy_user_groups:
       - systemd-journal
-    env_file_vars:
-      CUSTOM_ARGS: "--server.http.listen-addr=0.0.0.0:12345 --disable-reporting=true --stability.level=public-preview"
     config: |
       loki.write "local" {
         endpoint {
